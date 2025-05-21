@@ -4,19 +4,19 @@ Hariram
 
 Aasheik Saran
 
-Overview
-This project implements a two-channel function generator using the Tiva C Series TM4C123GH6PM microcontroller. It outputs various analog waveforms by interfacing with the LTC1661 DAC (Digital-to-Analog Converter) and provides user interaction through a Python GUI and onboard hardware switches.
+🧠 Overview
+This is a 2-channel Function Generator project using the Tiva C Series TM4C123GH6PM microcontroller. It interfaces with two LTC1661 DACs to produce analog waveforms. Users can select waveform type, frequency, and amplitude using a Python GUI or onboard switch SW1, with status indicated by LEDs.
 
-Features
-Waveforms Generated:
+🔧 Features
+Waveform Types:
 
-Sine wave
+Sine
 
-Square wave
+Square
 
-Triangular wave
+Triangular
 
-Sawtooth wave
+Sawtooth
 
 Adjustable Parameters:
 
@@ -24,81 +24,132 @@ Frequency
 
 Amplitude
 
-Interface:
+User Interfaces:
 
-UART for waveform configuration via Python GUI
+UART (Python GUI)
 
-SPI for DAC communication
+SW1 (Toggling waveform types)
 
-Hardware switch (SW1) to change waveform type
+LED Indicators (Waveform status)
 
-LED indicators for waveform type
+Kentec Display (2-channel visual output)
 
-Kentec QVGA Display (Enhanced to support 2-channel output)
+⚙️ Methodology
+Lookup Table: 1024 12-bit samples per waveform (generated using MATLAB)
 
-Methodology
-Lookup Table (LUT) Generation:
+SPI Communication: Used to send LUT values to LTC1661 DAC
 
-LUTs for sine, square, triangular, and sawtooth waves are created using MATLAB.
+Waveform Switching: Detected via GPIO interrupt on SW1
 
-Each LUT contains 1024 samples, each 12-bit wide.
+Amplitude Control: Managed by second DAC
 
-DAC Communication:
+Python GUI: Sends waveform settings via UART
 
-Values from the LUT are transmitted using SPI to the LTC1661 DAC.
+🔌 Hardware Components
+Component	Description
+Tiva C TM4C123GH6PM	ARM Cortex-M4 Microcontroller
+LTC1661 DAC (x2)	12-bit DAC for waveform & amplitude
+Kentec Display	QVGA graphical output display
+LEDs	Red, Green, Blue – waveform indicators
+SW1 Button	Used to switch waveform types
 
-SPI uses:
+💻 Embedded Code Setup
+Program written in C using TivaWare libraries. Uses SPI, UART, and GPIO.
 
-SCLK: Clock signal
+Directory Structure
+ruby
+Copy
+Edit
+/Firmware
+  ├── main.c
+  ├── waveform.c
+  ├── dac.c
+  ├── spi_config.c
+  ├── uart_gui.c
+  └── tivaware/ (include TivaWare driverlib)
+How to Build & Flash
+Open Code Composer Studio
 
-DOUT: Data signal
+Import project
 
-~CS: Chip select
+Connect Tiva C LaunchPad
 
-Two DACs are used: one for waveform output and one for amplitude control.
+Build the project
 
-User Interaction:
+Flash to the board
 
-Switch SW1 triggers waveform change and is accompanied by LED indicators:
+🖥️ Python GUI
+A GUI is used to send waveform parameters (type, frequency, amplitude) to the Tiva board.
 
-Red: Sine
+GUI Requirements
+pyserial
 
-Blue: Triangular
+tkinter (for GUI)
 
-Green: Sawtooth
+Run the GUI
+bash
+Copy
+Edit
+python3 function_generator_gui.py
+GUI Features
+Select waveform type
 
-Green + Blue: Square
+Input frequency (Hz)
 
-Python GUI allows dynamic control of waveform type, frequency, and amplitude via UART.
+Input amplitude (0–4095 range)
 
-Hardware Setup
-Tiva C TM4C123GH6PM
+Press "Send" to transmit via UART
 
-LTC1661 DAC x2
+📡 UART Protocol
+Format: TYPE,FREQ,AMPL\n
 
-Kentec QVGA Display
+Example: SINE,1000,2048\n
 
-LED indicators and switch inputs
+Parsed in real-time by the TM4C microcontroller.
 
-Dependencies
-TivaWare Library for TM4C123GH6PM
+🧾 Circuit Schematic (Text Overview)
+DAC1 (Waveform Output):
 
-Python (for GUI)
+CS: GPIO pin X
 
-UART and SPI peripheral drivers
+DIN: SSI_TX
 
-MATLAB (for LUT generation, optional)
+CLK: SSI_CLK
 
-How to Run
-Flash the microcontroller with the embedded code.
+DAC2 (Amplitude Control):
 
-Connect the DACs as described.
+CS: GPIO pin Y
 
-Use Python GUI to set waveform parameters via UART.
+UART:
 
-View output on oscilloscope or Kentec display.
+TX: USB Debug UART to PC
 
-Press SW1 to toggle waveform types.
+SW1: GPIO (Interrupt-enabled)
 
-Acknowledgment
-Code for the Kentec display was adapted and enhanced from a senior’s previous project.
+LEDs: GPIOs (for waveform indication)
+
+Kentec Display: SPI + Control lines (as per BoosterPack spec)
+
+(You can attach a KiCad or Fritzing diagram for visual reference)
+
+📺 Kentec Display
+Enhanced from senior batch code
+
+Displays two waveform channels simultaneously
+
+Output can be routed to oscilloscope via DAC output pins
+
+🧠 Future Work
+Frequency sweep
+
+Phase modulation
+
+Signal mixing
+
+Saving/recalling custom waveform presets
+
+🙏 Acknowledgments
+Thanks to seniors for display codebase.
+
+MATLAB was used for LUT generation.
+
