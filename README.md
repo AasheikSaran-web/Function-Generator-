@@ -5,9 +5,13 @@ Hariram
 Aasheik Saran
 
 🧠 Overview
+
+
 This is a 2-channel Function Generator project using the Tiva C Series TM4C123GH6PM microcontroller. It interfaces with two LTC1661 DACs to produce analog waveforms. Users can select waveform type, frequency, and amplitude using a Python GUI or onboard switch SW1, with status indicated by LEDs.
 
 🔧 Features
+
+
 Waveform Types:
 
 Sine
